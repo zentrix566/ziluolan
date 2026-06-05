@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="520" viewBox="0 0 760 520">
+  <rect width="100%" height="100%" fill="#171122"/>
+  <style>
+    .cell { fill:#2c2141; stroke:#9f78d9; stroke-width:2.4; }
+    .label {
+      font: 800 24px "Segoe UI", Arial, sans-serif;
+      fill:#fff7c7;
+      text-anchor:middle;
+      dominant-baseline:middle;
+    }
+    .title { font: 800 26px "Segoe UI", Arial, sans-serif; fill:#ffffff; }
+    .note { font: 16px "Segoe UI", Arial, sans-serif; fill:#cbb8ff; text-anchor:middle; }
+  </style>
+
+  <text x="36" y="42" class="title">迷宫坐标参照图</text>
+
+  <!-- Coordinate reference layout:
+       display rows by x+y so the board is easy to read as a diamond. -->
+  <!-- Row 0 -->
+  <polygon class="cell" points="380,92 432,110 380,128 328,110"/>
+  <text x="380" y="110" class="label">(0,0)</text>
+
+  <!-- Row 1 -->
+  <polygon class="cell" points="316,130 368,148 316,166 264,148"/>
+  <text x="316" y="148" class="label">(1,0)</text>
+  <polygon class="cell" points="444,130 496,148 444,166 392,148"/>
+  <text x="444" y="148" class="label">(0,1)</text>
+
+  <!-- Row 2 -->
+  <polygon class="cell" points="252,168 304,186 252,204 200,186"/>
+  <text x="252" y="186" class="label">(2,0)</text>
+  <polygon class="cell" points="380,168 432,186 380,204 328,186"/>
+  <text x="380" y="186" class="label">(1,1)</text>
+  <polygon class="cell" points="508,168 560,186 508,204 456,186"/>
+  <text x="508" y="186" class="label">(0,2)</text>
+
+  <!-- Row 3 -->
+  <polygon class="cell" points="188,206 240,224 188,242 136,224"/>
+  <text x="188" y="224" class="label">(3,0)</text>
+  <polygon class="cell" points="316,206 368,224 316,242 264,224"/>
+  <text x="316" y="224" class="label">(2,1)</text>
+  <polygon class="cell" points="444,206 496,224 444,242 392,224"/>
+  <text x="444" y="224" class="label">(1,2)</text>
+  <polygon class="cell" points="572,206 624,224 572,242 520,224"/>
+  <text x="572" y="224" class="label">(0,3)</text>
+
+  <!-- Row 4 -->
+  <polygon class="cell" points="124,244 176,262 124,280 72,262"/>
+  <text x="124" y="262" class="label">(4,0)</text>
+  <polygon class="cell" points="252,244 304,262 252,280 200,262"/>
+  <text x="252" y="262" class="label">(3,1)</text>
+  <polygon class="cell" points="380,244 432,262 380,280 328,262"/>
+  <text x="380" y="262" class="label">(2,2)</text>
+  <polygon class="cell" points="508,244 560,262 508,280 456,262"/>
+  <text x="508" y="262" class="label">(1,3)</text>
+  <polygon class="cell" points="636,244 688,262 636,280 584,262"/>
+  <text x="636" y="262" class="label">(0,4)</text>
+
+  <!-- Row 5 -->
+  <polygon class="cell" points="188,282 240,300 188,318 136,300"/>
+  <text x="188" y="300" class="label">(4,1)</text>
+  <polygon class="cell" points="316,282 368,300 316,318 264,300"/>
+  <text x="316" y="300" class="label">(3,2)</text>
+  <polygon class="cell" points="444,282 496,300 444,318 392,300"/>
+  <text x="444" y="300" class="label">(2,3)</text>
+  <polygon class="cell" points="572,282 624,300 572,318 520,300"/>
+  <text x="572" y="300" class="label">(1,4)</text>
+
+  <!-- Row 6 -->
+  <polygon class="cell" points="252,320 304,338 252,356 200,338"/>
+  <text x="252" y="338" class="label">(4,2)</text>
+  <polygon class="cell" points="380,320 432,338 380,356 328,338"/>
+  <text x="380" y="338" class="label">(3,3)</text>
+  <polygon class="cell" points="508,320 560,338 508,356 456,338"/>
+  <text x="508" y="338" class="label">(2,4)</text>
+
+  <!-- Row 7 -->
+  <polygon class="cell" points="316,358 368,376 316,394 264,376"/>
+  <text x="316" y="376" class="label">(4,3)</text>
+  <polygon class="cell" points="444,358 496,376 444,394 392,376"/>
+  <text x="444" y="376" class="label">(3,4)</text>
+
+  <!-- Row 8 -->
+  <polygon class="cell" points="380,396 432,414 380,432 328,414"/>
+  <text x="380" y="414" class="label">(4,4)</text>
+</svg>
