@@ -65,16 +65,22 @@ py .\flip_cell.py --x 2 --y 1
 py .\scan_all_cells.py
 ```
 
-默认输出：
+默认输出到带时间戳的文件，不会覆盖旧结果：
 
 ```text
-scan_results.md
+scan_results/scan_<timestamp>.md
 ```
 
-也可以指定输出文件：
+也可以指定输出文件。如果文件已存在，脚本会自动追加 `_2`、`_3` 这类后缀避免覆盖：
 
 ```powershell
 py .\scan_all_cells.py --output floor3_scan.md
+```
+
+也可以在文件名里显式使用时间戳占位：
+
+```powershell
+py .\scan_all_cells.py --output "floor3_scan_{timestamp}.md"
 ```
 
 注意：这个脚本会连续调用翻格接口。未翻开的格子可能会消耗活动体力或改变服务器状态，运行前请确认。

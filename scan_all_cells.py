@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import time
 import urllib.error
 from datetime import datetime
@@ -7,7 +8,7 @@ from datetime import datetime
 from flip_cell import DEFAULT_CONFIG, load_config, request_flip
 
 
-DEFAULT_OUTPUT = "scan_results.md"
+DEFAULT_OUTPUT_DIR = "scan_results"
 
 
 def classify_result(result: dict) -> str:
@@ -46,6 +47,28 @@ def cell_summary(x: int, y: int, result: dict) -> dict:
         "stamina": data.get("stamina") if isinstance(data, dict) else None,
         "summary": classify_result(result),
     }
+
+
+def resolve_output_path(output: str | None) -> str:
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    if not output:
+        return f"{DEFAULT_OUTPUT_DIR}/scan_{timestamp}.md"
+
+    if "{timestamp}" in output:
+        return output.replace("{timestamp}", timestamp)
+
+    candidate = output
+    if not os.path.exists(candidate):
+        return candidate
+
+    stem, ext = os.path.splitext(candidate)
+    ext = ext or ".md"
+    index = 2
+    while True:
+        next_candidate = f"{stem}_{index}{ext}"
+        if not os.path.exists(next_candidate):
+            return next_candidate
+        index += 1
 
 
 def write_markdown(path: str, floor: int, rows: list[dict]) -> None:
@@ -90,6 +113,10 @@ def write_markdown(path: str, floor: int, rows: list[dict]) -> None:
             ]
         )
 
+    output_dir = os.path.dirname(path)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
@@ -97,7 +124,13 @@ def write_markdown(path: str, floor: int, rows: list[dict]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Scan all 25 Violet Hold maze cells.")
     parser.add_argument("--config", default=DEFAULT_CONFIG, help=f"Config JSON path, default: {DEFAULT_CONFIG}")
-    parser.add_argument("--output", default=DEFAULT_OUTPUT, help=f"Markdown output path, default: {DEFAULT_OUTPUT}")
+    parser.add_argument(
+        "--output",
+        help=(
+            "Markdown output path. Default: scan_results/scan_<timestamp>.md. "
+            "Use {timestamp} in the name for a timestamp placeholder."
+        ),
+    )
     parser.add_argument("--delay", type=float, default=0.2, help="Delay between requests in seconds, default: 0.2")
     args = parser.parse_args()
 
@@ -107,6 +140,7 @@ def main() -> int:
     if not token:
         raise SystemExit(f"Missing token in {args.config}")
 
+    output = resolve_output_path(args.output)
     rows = []
     for y in range(5):
         for x in range(5):
@@ -129,8 +163,8 @@ def main() -> int:
             if args.delay > 0:
                 time.sleep(args.delay)
 
-    write_markdown(args.output, floor, rows)
-    print(f"\nWrote {args.output}")
+    write_markdown(output, floor, rows)
+    print(f"\nWrote {output}")
     return 0
 
 
