@@ -13,6 +13,7 @@
 - `4-3.json`：翻开 `(4,3)` 的返回样例，结果为普通空格。
 - `puzzle.js`：页面加载脚本样例。
 - `flip_cell.py`：翻格请求脚本，默认读取 `flip_config.json`。
+- `scan_all_cells.py`：批量请求 25 个坐标并输出 Markdown 扫描结果。
 - `flip_config.example.json`：配置文件示例，不包含真实 token。
 - `剧情事件统计.md`：已整理的 400 系列事件表。
 - `迷宫坐标参照图.svg` / `迷宫坐标参照图.png`：迷宫坐标参考图。
@@ -55,6 +56,28 @@ py .\flip_cell.py --x 2 --y 1
 - `box_type: 0` 且 `box_id: 0`：普通空格。
 - 其他情况：事件格。
 - 如果返回 `data: null`，例如“格子已翻开”，脚本会正常提示，不会报错退出。
+
+## 批量扫描全部坐标
+
+`scan_all_cells.py` 会从 `(0,0)` 到 `(4,4)` 请求全部 25 个格子，并把汇总和原始返回写入 Markdown 文档：
+
+```powershell
+py .\scan_all_cells.py
+```
+
+默认输出：
+
+```text
+scan_results.md
+```
+
+也可以指定输出文件：
+
+```powershell
+py .\scan_all_cells.py --output floor3_scan.md
+```
+
+注意：这个脚本会连续调用翻格接口。未翻开的格子可能会消耗活动体力或改变服务器状态，运行前请确认。
 
 ## 敏感文件
 
