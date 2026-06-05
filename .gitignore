@@ -28,3 +28,11 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Local-only flip config
+flip_local.py
+flip_config.json

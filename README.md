@@ -1,19 +1,67 @@
 # ziluolan
 
-炉石传说小程序活动「紫罗兰大冒险」抓包数据分析项目，用于整理迷宫地图、任务、奖励和剧情事件数据。
+炉石传说小程序活动「紫罗兰大冒险」抓包数据分析与辅助脚本。
 
-## 内容
+这个仓库用于整理迷宫地图、任务、奖励、剧情事件，以及手动调用翻格接口来确认格子类型。当前结论是：出口坐标没有在初始地图数据里直接暴露，只能翻开格子后看服务器返回是否为出口。
 
-- `info.json`：当前迷宫楼层状态数据
-- `task.json`：任务或奖励相关数据
-- `yige.json`：接口数据样本
-- `puzzle.js`：页面加载脚本样本
-- `剧情事件统计.md`：剧情事件统计记录
-- `迷宫截图坐标标注.jpg`、`迷宫坐标参照图.svg`、`迷宫坐标参照图.png`：迷宫坐标参考资料
+## 文件说明
 
-## 使用
+- `info.json`：当前楼层迷宫状态数据样例。
+- `task.json`：活动配置，包含守卫盘问、特殊任务、剧情事件、抉择事件、结识角色事件、宝箱、传送门等配置。
+- `yige.json`：翻格接口返回样例。
+- `puzzle.js`：页面加载脚本样例。
+- `flip_cell.py`：翻格请求脚本，默认读取 `flip_config.json`。
+- `flip_config.example.json`：配置文件示例，不包含真实 token。
+- `剧情事件统计.md`：已整理的 400 系列事件表。
+- `迷宫坐标参照图.svg` / `迷宫坐标参照图.png`：迷宫坐标参考图。
+- `LICENSE`：开源许可证。
 
-直接查看 JSON、Markdown 和图片文件进行分析。后续如添加脚本，可在此补充运行方式。
+## 使用翻格脚本
+
+先复制示例配置：
+
+```powershell
+Copy-Item .\flip_config.example.json .\flip_config.json
+```
+
+编辑 `flip_config.json`：
+
+```json
+{
+  "token": "paste-your-Xcxtoken-here",
+  "floor": 3,
+  "x": 1,
+  "y": 0
+}
+```
+
+运行：
+
+```powershell
+py .\flip_cell.py
+```
+
+也可以临时覆盖坐标：
+
+```powershell
+py .\flip_cell.py --x 2 --y 1
+```
+
+脚本会打印接口返回，并额外提示格子类型：
+
+- `box_type: 9` 或 `box_id: 40053`：出口 / 传送门。
+- `box_type: 0` 且 `box_id: 0`：普通空格。
+- 其他情况：事件格。
+- 如果返回 `data: null`，例如“格子已翻开”，脚本会正常提示，不会报错退出。
+
+## 敏感文件
+
+`flip_config.json` 会包含你的 `Xcxtoken`，不要提交或公开。仓库已通过 `.gitignore` 忽略：
+
+- `flip_config.json`
+- `flip_local.py`
+- `__pycache__/`
+- `*.py[cod]`
 
 ## 作者
 
