@@ -59,7 +59,7 @@ py .\flip_cell.py --x 2 --y 1
 
 ## 批量扫描全部坐标
 
-`scan_all_cells.py` 会从 `(0,0)` 到 `(4,4)` 请求全部 25 个格子，并把汇总和原始返回写入 Markdown 文档：
+`scan_all_cells.py` 会从 `(0,0)` 到 `(4,4)` 请求全部 25 个格子，并把汇总和原始返回写入 Markdown 文档。结果文档会把非“格子已翻开”的返回放在最上面的“重点结果”里，已翻开的格子单独列在下面。
 
 ```powershell
 py .\scan_all_cells.py

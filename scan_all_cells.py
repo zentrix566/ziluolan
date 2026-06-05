@@ -9,16 +9,21 @@ from flip_cell import DEFAULT_CONFIG, load_config, request_flip
 
 
 DEFAULT_OUTPUT_DIR = "scan_results"
+ALREADY_OPENED_MESSAGE = "格子已翻开"
+
+
+def all_targets() -> list[tuple[int, int]]:
+    return [(x, y) for y in range(5) for x in range(5)]
 
 
 def classify_result(result: dict) -> str:
     data = result.get("data")
     if not isinstance(data, dict):
-        return result.get("message") or "no cell data"
+        return result.get("message") or "无格子数据"
 
     cell = data.get("cell")
     if not isinstance(cell, dict):
-        return "no cell data"
+        return "无 cell 数据"
 
     box_type = cell.get("box_type")
     box_id = cell.get("box_id")
@@ -27,6 +32,10 @@ def classify_result(result: dict) -> str:
     if box_type == 0 and box_id == 0:
         return "普通空格"
     return f"事件格 box_type={box_type}, box_id={box_id}"
+
+
+def is_already_opened(row: dict) -> bool:
+    return row.get("code") == 30002 or row.get("message") == ALREADY_OPENED_MESSAGE
 
 
 def cell_summary(x: int, y: int, result: dict) -> dict:
@@ -71,20 +80,19 @@ def resolve_output_path(output: str | None) -> str:
         index += 1
 
 
-def write_markdown(path: str, floor: int, rows: list[dict]) -> None:
-    generated_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    lines = [
-        "# 紫罗兰大冒险翻格扫描结果",
-        "",
-        f"- 生成时间：{generated_at}",
-        f"- floor：{floor}",
-        "",
-        "## 汇总",
-        "",
-        "| 坐标 | code | message | box_type | box_id | need_choose | stamina | 判断 |",
-        "| --- | ---: | --- | ---: | ---: | --- | ---: | --- |",
-    ]
+def format_cell_list(cells: list[tuple[int, int]]) -> str:
+    if not cells:
+        return "无"
+    return "、".join(f"({x},{y})" for x, y in cells)
 
+
+def append_rows(lines: list[str], rows: list[dict]) -> None:
+    lines.extend(
+        [
+            "| 坐标 | code | message | box_type | box_id | need_choose | stamina | 判断 |",
+            "| --- | ---: | --- | ---: | ---: | --- | ---: | --- |",
+        ]
+    )
     for row in rows:
         coord = f"({row['x']},{row['y']})"
         lines.append(
@@ -99,6 +107,29 @@ def write_markdown(path: str, floor: int, rows: list[dict]) -> None:
                 summary=row.get("summary", ""),
             )
         )
+
+
+def write_markdown(path: str, floor: int, targets: list[tuple[int, int]], rows: list[dict]) -> None:
+    generated_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    active_rows = [row for row in rows if not is_already_opened(row)]
+    opened_rows = [row for row in rows if is_already_opened(row)]
+
+    lines = [
+        "# 紫罗兰大冒险翻格扫描结果",
+        "",
+        f"- 生成时间：{generated_at}",
+        f"- floor：{floor}",
+        f"- 扫描坐标：{format_cell_list(targets)}",
+        f"- 重点结果数量：{len(active_rows)}",
+        f"- 已翻开数量：{len(opened_rows)}",
+        "",
+        "## 重点结果（非“格子已翻开”）",
+        "",
+    ]
+    append_rows(lines, active_rows)
+
+    lines.extend(["", "## 已翻开格子", ""])
+    append_rows(lines, opened_rows)
 
     lines.extend(["", "## 原始返回", ""])
     for row in rows:
@@ -140,30 +171,33 @@ def main() -> int:
     if not token:
         raise SystemExit(f"Missing token in {args.config}")
 
+    targets = all_targets()
     output = resolve_output_path(args.output)
+    print("扫描范围：全部 25 个格子")
+    print(f"扫描坐标：{format_cell_list(targets)}")
+
     rows = []
-    for y in range(5):
-        for x in range(5):
-            print(f"request floor={floor}, x={x}, y={y}")
-            try:
-                result = request_flip(token, floor, x, y)
-            except urllib.error.HTTPError as exc:
-                result = {
-                    "code": -1,
-                    "message": f"HTTP {exc.code}",
-                    "data": exc.read().decode("utf-8", errors="replace"),
-                }
-            except urllib.error.URLError as exc:
-                result = {"code": -1, "message": f"Request failed: {exc}", "data": None}
+    for x, y in targets:
+        print(f"request floor={floor}, x={x}, y={y}")
+        try:
+            result = request_flip(token, floor, x, y)
+        except urllib.error.HTTPError as exc:
+            result = {
+                "code": -1,
+                "message": f"HTTP {exc.code}",
+                "data": exc.read().decode("utf-8", errors="replace"),
+            }
+        except urllib.error.URLError as exc:
+            result = {"code": -1, "message": f"Request failed: {exc}", "data": None}
 
-            row = cell_summary(x, y, result)
-            row["raw"] = result
-            rows.append(row)
-            print(f"  => {row['summary']}")
-            if args.delay > 0:
-                time.sleep(args.delay)
+        row = cell_summary(x, y, result)
+        row["raw"] = result
+        rows.append(row)
+        print(f"  => {row['summary']}")
+        if args.delay > 0:
+            time.sleep(args.delay)
 
-    write_markdown(output, floor, rows)
+    write_markdown(output, floor, targets, rows)
     print(f"\nWrote {output}")
     return 0
 
