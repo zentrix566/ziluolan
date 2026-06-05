@@ -1,0 +1,27 @@
+{
+	"code": 0,
+	"message": "成功",
+	"data": {
+		"stamina": 5,
+		"cell": {
+			"x": 4,
+			"y": 3,
+			"status": 1,
+			"box_type": 0,
+			"box_id": 0,
+			"reward_count": 0,
+			"is_locked": false,
+			"clue_type": 0,
+			"clue_target": null,
+			"event_done": true
+		},
+		"event": {
+			"need_choose": false,
+			"stamina_delta": 0
+		},
+		"adjacent_cells": null,
+		"clue_target": null,
+		"is_all_done": false,
+		"completion_prize_id": 0
+	}
+}
